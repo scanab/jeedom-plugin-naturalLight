@@ -658,7 +658,11 @@ class naturalLight extends eqLogic
           if ($cmdState) {
             log::add(__CLASS__, 'info', 'lampe allumée');
             $cmd = $this->getLampTemperatureCommand();
-            $cmd->execCmd(array('slider' => $temp_color, 'transition' => 300));
+            $currentColorTempValue = cmd::byId($cmd->getValue())->execCmd();
+            log::add(__CLASS__, 'info', 'color temp value : ' . $currentColorTempValue);
+            if ($temp_color != $currentColorTempValue) {
+              $cmd->execCmd(array('slider' => $temp_color, 'transition' => 300));
+            }
           } else {
             log::add(__CLASS__, 'info', 'lampe éteinte');
           }
