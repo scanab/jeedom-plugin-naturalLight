@@ -223,7 +223,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 										</label>
 										<div class="col-xs-11 col-sm-8">
 											<div class="input-group">
-												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="condition" data-concat="1" />
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="temperatureCondition" data-concat="1" />
 												<span class="input-group-btn">
 													<a class="btn btn-default listCmdInfo">
 														<i class="fas fa-list-alt"></i>

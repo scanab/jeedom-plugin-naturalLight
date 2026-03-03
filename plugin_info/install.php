@@ -23,6 +23,11 @@ function naturalLight_install() {
 
 // Fonction exécutée automatiquement après la mise à jour du plugin
 function naturalLight_update() {
+    foreach (eqLogic::byType('naturalLight') as $eqLogic) {
+        $eqLogic->setConfiguration('condition', null);
+		$eqLogic->save();
+	}
+
 }
 
 // Fonction exécutée automatiquement après la suppression du plugin

@@ -141,12 +141,6 @@ class naturalLight extends eqLogic
         log::add(__CLASS__, 'debug', '  Value=' . $this->getConfiguration('temperature_enable'));
       }
       $this->setMinMaxValueConfigurationTemperatureColor($cmdLampe);
-
-      // Récupération condition
-      $condition = $this->getConfiguration('condition');
-      if ($condition != '') {
-        $this->setConfiguration('temperatureCondition', $condition);
-      }
     }
     unset($cmdLampe);
 
@@ -649,7 +643,7 @@ class naturalLight extends eqLogic
         $cmdTempColor->event($temp_color);
       
         // Gestion de la condition
-        $condition = $this->getConfiguration('condition');
+        $condition = $this->getConfiguration('temperatureCondition');
         $conditionResult = $this->evaluateCondition($condition);
         if (!$conditionResult) {
           log::add(__CLASS__, 'info', 'condition Température couleur indique arrêt');
