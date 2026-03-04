@@ -67,11 +67,11 @@ class naturalLight extends eqLogic
       if ($lamp_state) {
         $eqLogic->computeLamp();
       } else {
-        $autoDisableTemperatureCmd = $eqLogic->getCmd(null, 'auto_disable_temperature');
+        $autoDisableTemperatureCmd = $eqLogic->getBrightnessAutoDisableCmd(false);
         if (is_object($autoDisableTemperatureCmd)) {
           $autoDisableTemperatureCmd->event(1);
         }
-        $autoDisableBrightnessCmd = $eqLogic->getCmd(null, 'auto_disable_brightness');
+        $autoDisableBrightnessCmd = $eqLogic->getTemperatureAutoDisableCmd(false);
         if (is_object($autoDisableBrightnessCmd)) {
           $autoDisableBrightnessCmd->event(1);
         }
@@ -180,7 +180,7 @@ class naturalLight extends eqLogic
 
   private function isTemperatureAutoDisableActivated() {
     try {
-      return !$this->getTemperatureAutoDisableCmd()->execute();
+      return !$this->getTemperatureAutoDisableCmd()->execCmd();
     } catch (Exception $ex) {
       return false;
     }
@@ -188,7 +188,7 @@ class naturalLight extends eqLogic
 
   private function isBrightnessAutoDisableActivated() {
     try {
-      return !$this->getBrightnessAutoDisableCmd()->execute();
+      return !$this->getBrightnessAutoDisableCmd()->execCmd();
     } catch (Exception $ex) {
       return false;
     }
