@@ -185,7 +185,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 									<div class="form-group">
 										<label class="col-sm-4 control-label">{{Désactivation automatique}}
-											<sup><i class="fas fa-question-circle tooltips" title="{{Si coché, l'automatisation sera désactivée jusqu'à la prochaine extinction de la lampe}}"></i></sup>
+											<sup><i class="fas fa-question-circle tooltips" title="{{Si coché, l'automatisation sera désactivée jusqu'à la prochaine extinction de la lampe en cas de modification manuelle}}"></i></sup>
 										</label>
 										<div class="col-sm-3">
 											<div class="input-group">
@@ -197,7 +197,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-4 control-label">{{Action Température couleur}}</label>
+										<label class="col-sm-4 control-label">{{Température couleur}}</label>
 										<div class="col-xs-11 col-sm-8">
 											<div class="input-group">
 												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="temperature_color" data-concat="0" />
@@ -210,7 +210,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 										</div>
 									</div>
 
-									<div class="form-group">
+									<!--div class="form-group">
 										<label class="col-sm-4 control-label">{{Info Température couleur}}
 											<sup><i class="fas fa-question-circle tooltips" title="{{Inutile si la case de désactivation automatique est cochée}}"></i></sup>
 										</label>
@@ -224,7 +224,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 												</span>
 											</div>
 										</div>
-									</div>
+								</div-->
 
 									<div class="form-group">
 										<label class="col-sm-4 control-label">{{valeur}}<sub>(mired)</sub></label>
@@ -264,7 +264,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								</div>
 							</div>
 							<div class="col-lg-6">
-								<legend><i class="icon jeedom2-lightbulb25"></i> {{Action Luminosité Lampe}}</legend>
+								<legend><i class="icon jeedom2-lightbulb25"></i> {{Luminosité Lampe}}</legend>
 								<div class="form-group">
 									<label class="col-sm-4 control-label">{{Activer}}</label>
 									<div class="col-sm-3">
@@ -276,7 +276,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									</div>
 								</div>
 
-								<div class="form-group">
+								<!--div class="form-group">
 									<label class="col-sm-4 control-label">{{Info Luminosité}}
 										<sup><i class="fas fa-question-circle tooltips" title="{{Inutile si la case de désactivation automatique est cochée}}"></i></sup>
 									</label>
@@ -290,11 +290,11 @@ $eqLogics = eqLogic::byType($plugin->getId());
 											</span>
 										</div>
 									</div>
-								</div>
+							</div-->
 
 								<div class="form-group">
 									<label class="col-sm-4 control-label">{{Désactivation automatique}}
-										<sup><i class="fas fa-question-circle tooltips" title="{{Si coché, l'automatisation sera désactivée jusqu'à la prochaine extinction de la lampe}}"></i></sup>
+										<sup><i class="fas fa-question-circle tooltips" title="{{Si coché, l'automatisation sera désactivée jusqu'à la prochaine extinction de la lampe en cas de modification manuelle}}"></i></sup>
 									</label>
 									<div class="col-sm-3">
 										<div class="input-group">
