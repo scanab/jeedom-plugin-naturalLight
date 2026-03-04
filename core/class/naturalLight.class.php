@@ -140,39 +140,39 @@ class naturalLight extends eqLogic
 
   /*     * *********************Méthodes d'instance************************* */
 
-  private function getTemperatureStateInfoCmd() {
+  private function getTemperatureStateInfoCmd($throwEx = true) {
     $cmdTemperatureColor = $this->getCmdFromConfiguration('temperature_color');
     $cmdTemperatureColorInfo = $cmdTemperatureColor->getCmdValue();
-    if (!is_object($cmdTemperatureColorInfo)) {
+    if ($throwEx && !is_object($cmdTemperatureColorInfo)) {
       throw new Exception("temperature_color_info non renseigné");
     }
     return $cmdTemperatureColorInfo;
   }
 
-  private function getBrightnessStateInfoCmd() {
+  private function getBrightnessStateInfoCmd($throwEx = true) {
     $cmdBrightness = $this->getCmdFromConfiguration('brightness');
     $cmdBrightnessInfo = $cmdBrightness->getCmdValue();
-    if (!is_object($cmdBrightnessInfo)) {
+    if ($throwEx && !is_object($cmdBrightnessInfo)) {
       throw new Exception("brightness_info non renseigné");
     }
     return $cmdBrightnessInfo;
   }
 
-  private function getStateInfoCmd() {
-    return $this->getCmdFromConfiguration('lamp_state');
+  private function getStateInfoCmd($throwEx = true) {
+    return $this->getCmdFromConfiguration('lamp_state', $throwEx);
   }
 
-  private function getTemperatureAutoDisableCmd() {
+  private function getTemperatureAutoDisableCmd($throwEx = true) {
     $res = $this->getCmd(null, 'auto_disable_temperature');
-    if (!is_object($res)) {
+    if ($throwEx && !is_object($res)) {
       throw new Exception("Cmd info auto_disable_temperature absent");
     }
     return $res;
   }
 
-  private function getBrightnessAutoDisableCmd() {
+  private function getBrightnessAutoDisableCmd($throwEx = true) {
     $res = $this->getCmd(null, 'auto_disable_brightness');
-    if (!is_object($res)) {
+    if ($throwEx && !is_object($res)) {
       throw new Exception("Cmd info auto_disable_temperature absent");
     }
     return $res;
@@ -191,18 +191,6 @@ class naturalLight extends eqLogic
       return !$this->getBrightnessAutoDisableCmd()->execute();
     } catch (Exception $ex) {
       return false;
-    }
-  }
-
-  private function getCmdValueFromConfiguration(string configurtionKey = null, defaut = null) {
-    try {
-      return getCmdFromConfiguration(string configurtionKey = null)->execute();
-    } catch (Exception $ex) {
-      if (defaut == null) {
-        throw $ex;
-      } else {
-        return defaut;
-      }
     }
   }
   
