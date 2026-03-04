@@ -144,10 +144,16 @@ class naturalLight extends eqLogic
     $temperatureColorCmdId = $this->getConfiguration('temperature_color');
     $temperatureColorCmdId = str_replace('#', '', $temperatureColorCmdId);
     $cmdTemperatureColor = cmd::byId($temperatureColorCmdId);
+    if (!is_object($cmdTemperatureColor)) {
+      throw new Exception("temperature_color non renseigné");
+    }
     $cmdTemperatureColorInfo = $cmdTemperatureColor->getCmdValue();
     //$temperature_color_info = $this->getConfiguration('temperature_color_info');
     //$temperature_color_info = str_replace('#', '', $temperature_color_info);
     //$cmdTemperatureColorInfo = cmd::byId($temperature_color_info);
+    if (!is_object($cmdTemperatureColorInfo)) {
+      throw new Exception("temperature_color_info non renseigné");
+    }
     return $cmdTemperatureColorInfo;
   }
 
@@ -155,13 +161,29 @@ class naturalLight extends eqLogic
     $brightnessCmdId = $this->getConfiguration('brightness');
     $brightnessCmdId = str_replace('#', '', $brightnessCmdId);
     $cmdBrightness = cmd::byId($brightnessCmdId);
+    if (!is_object($cmdBrightness)) {
+      throw new Exception("brightness non renseigné");
+    }
     $cmdBrightnessInfo = $cmdBrightness->getCmdValue();
     //$brightness_info = $this->getConfiguration('brightness_info');
     //$brightness_info = str_replace('#', '', $brightness_info);
     //$cmdBrightnessInfo = cmd::byId($brightness_info);
+    if (!is_object($cmdBrightnessInfo)) {
+      throw new Exception("brightness_info non renseigné");
+    }
     return $cmdBrightnessInfo;
   }
 
+  private function getStateInfoCmd() {
+    $lamp_state = $this->getConfiguration('lamp_state');
+    $lamp_state = str_replace('#', '', $lamp_state);
+    $cmd = cmd::byId($lamp_state);
+    if (!is_object($cmd)) {
+      throw new Exception("lamp_state non renseigné");
+    }
+    return $cmd;
+  }
+  
   /**
    * @return listener
    */
@@ -198,13 +220,7 @@ class naturalLight extends eqLogic
       return;
     }
 
-    $lamp_state = $this->getConfiguration('lamp_state');
-    $lamp_state = str_replace('#', '', $lamp_state);
-    $cmd = cmd::byId($lamp_state);
-    if (!is_object($cmd)) {
-      throw new Exception("lamp_state non renseigné");
-    }
-
+    $cmd = $this->getStateInfoCmd();
     $listener = $this->getStateListener();
     if (!is_object($listener)) {
       $listener = new listener();
@@ -216,19 +232,13 @@ class naturalLight extends eqLogic
     $listener->addEvent($cmd->getId());
     $listener->save();
 
+    $listener = $this->getTemperatureStateListener();
     if ($this->getConfiguration('temperature_auto_disable', 0) == 0) {
-      $listener = $this->getTemperatureStateListener();
       if (is_object($listener)) {
         $listener->remove();
       }
     } else {
-      $temperature_state = $this->getConfiguration('temperature_color_info');
-      $temperature_state = str_replace('#', '', $temperature_state);
-      $cmd = cmd::byId($temperature_state);
-      if (!is_object($cmd)) {
-        throw new Exception("temperature_color_info non renseigné");
-      }
-      $listener = $this->getTemperatureStateListener();
+      $cmd = $this->getTemperatureStateInfoCmd();
       if (!is_object($listener)) {
         $listener = new listener();
         $listener->setClass(__CLASS__);
@@ -240,19 +250,13 @@ class naturalLight extends eqLogic
       $listener->save();
     }
 
+    $listener = $this->getBrightnessStateListener();
     if ($this->getConfiguration('brightness_auto_disable', 0) == 0) {
-      $listener = $this->getBrightnessStateListener();
       if (is_object($listener)) {
         $listener->remove();
       }
     } else {
-      $brightness_state = $this->getConfiguration('brightness_info');
-      $brightness_state = str_replace('#', '', $brightness_state);
-      $cmd = cmd::byId($brightness_state);
-      if (!is_object($cmd)) {
-        throw new Exception("brightness_info non renseigné");
-      }
-      $listener = $this->getBrightnessStateListener();
+      $cmd = $this->getBrightnessStateInfoCmd();
       if (!is_object($listener)) {
         $listener = new listener();
         $listener->setClass(__CLASS__);
