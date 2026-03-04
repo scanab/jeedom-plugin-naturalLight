@@ -141,16 +141,8 @@ class naturalLight extends eqLogic
   /*     * *********************Méthodes d'instance************************* */
 
   private function getTemperatureStateInfoCmd() {
-    $temperatureColorCmdId = $this->getConfiguration('temperature_color');
-    $temperatureColorCmdId = str_replace('#', '', $temperatureColorCmdId);
-    $cmdTemperatureColor = cmd::byId($temperatureColorCmdId);
-    if (!is_object($cmdTemperatureColor)) {
-      throw new Exception("temperature_color non renseigné");
-    }
+    $cmdTemperatureColor = $this->getCmdFromConfiguration('temperature_color');
     $cmdTemperatureColorInfo = $cmdTemperatureColor->getCmdValue();
-    //$temperature_color_info = $this->getConfiguration('temperature_color_info');
-    //$temperature_color_info = str_replace('#', '', $temperature_color_info);
-    //$cmdTemperatureColorInfo = cmd::byId($temperature_color_info);
     if (!is_object($cmdTemperatureColorInfo)) {
       throw new Exception("temperature_color_info non renseigné");
     }
@@ -158,16 +150,8 @@ class naturalLight extends eqLogic
   }
 
   private function getBrightnessStateInfoCmd() {
-    $brightnessCmdId = $this->getConfiguration('brightness');
-    $brightnessCmdId = str_replace('#', '', $brightnessCmdId);
-    $cmdBrightness = cmd::byId($brightnessCmdId);
-    if (!is_object($cmdBrightness)) {
-      throw new Exception("brightness non renseigné");
-    }
+    $cmdBrightness = $this->getCmdFromConfiguration('brightness');
     $cmdBrightnessInfo = $cmdBrightness->getCmdValue();
-    //$brightness_info = $this->getConfiguration('brightness_info');
-    //$brightness_info = str_replace('#', '', $brightness_info);
-    //$cmdBrightnessInfo = cmd::byId($brightness_info);
     if (!is_object($cmdBrightnessInfo)) {
       throw new Exception("brightness_info non renseigné");
     }
@@ -175,11 +159,62 @@ class naturalLight extends eqLogic
   }
 
   private function getStateInfoCmd() {
-    $lamp_state = $this->getConfiguration('lamp_state');
-    $lamp_state = str_replace('#', '', $lamp_state);
-    $cmd = cmd::byId($lamp_state);
+    return $this->getCmdFromConfiguration('lamp_state');
+  }
+
+  private function getTemperatureAutoDisableCmd() {
+    $res = $this->getCmd(null, 'auto_disable_temperature');
+    if (!is_object($res)) {
+      throw new Exception("Cmd info auto_disable_temperature absent");
+    }
+    return $res;
+  }
+
+  private function getBrightnessAutoDisableCmd() {
+    $res = $this->getCmd(null, 'auto_disable_brightness');
+    if (!is_object($res)) {
+      throw new Exception("Cmd info auto_disable_temperature absent");
+    }
+    return $res;
+  }
+
+  private function isTemperatureAutoDisableActivated() {
+    try {
+      return !$this->getTemperatureAutoDisableCmd()->execute();
+    } catch (Exception $ex) {
+      return false;
+    }
+  }
+
+  private function isBrightnessAutoDisableActivated() {
+    try {
+      return !$this->getBrightnessAutoDisableCmd()->execute();
+    } catch (Exception $ex) {
+      return false;
+    }
+  }
+
+  private function getCmdValueFromConfiguration(string configurtionKey = null, defaut = null) {
+    try {
+      return getCmdFromConfiguration(string configurtionKey = null)->execute();
+    } catch (Exception $ex) {
+      if (defaut == null) {
+        throw $ex;
+      } else {
+        return defaut;
+      }
+    }
+  }
+  
+  private function getCmdFromConfiguration(string configurtionKey = null) {
+    if (configurtionKey == null) {
+      throw new Exception(__METHOD__ . " : La clé de configuration doit être renseignée");
+    }
+    $cmd_id = $this->getConfiguration(configurtionKey);
+    $cmd_id = str_replace('#', '', $cmd_id);
+    $cmd = cmd::byId($cmd_id);
     if (!is_object($cmd)) {
-      throw new Exception("lamp_state non renseigné");
+      throw new Exception(__METHOD__ . " : La clé de configuration $configurtionKey n'est pas ou mal renseignée");
     }
     return $cmd;
   }
