@@ -66,38 +66,127 @@ class naturalLight extends eqLogic
       $lamp_state = $eqLogic->getLampState();
       if ($lamp_state) {
         $eqLogic->computeLamp();
+      } else {
+        $autoDisableTemperatureCmd = $eqLogic->getCmd(null, 'auto_disable_temperature');
+        if (is_object($autoDisableTemperatureCmd)) {
+          $autoDisableTemperatureCmd->event(1);
+        }
+        $autoDisableBrightnessCmd = $eqLogic->getCmd(null, 'auto_disable_brightness');
+        if (is_object($autoDisableBrightnessCmd)) {
+          $autoDisableBrightnessCmd->event(1);
+        }
       }
+    }
+  }
+
+  public static function enableBrightnessAuto($_option)
+  {
+    log::add(__CLASS__, 'info', '*** ' . __FUNCTION__ . ' ***');
+
+    $eqLogic = self::byId($_option['id']);
+    if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
+      log::add(__CLASS__, 'info', ' > enableBrightnessAuto action sur : ' . $eqLogic->getHumanName());
+
+      // si la valeur de la commande info brightness_info différente de la commande brightness alors la luminosité est modifiée manuellement, on passe la commande auto_disable_brightness à 0 pour ne pas réactiver la luminosité auto, à 1 sinon
+        $cmdBrightnessColorInfo = $eqLogic->getBrightnessStateInfoCmd();
+        if (is_object($cmdBrightnessColorInfo)) {
+          $value = $cmdBrightnessColorInfo->execCmd();
+          $cmdBrightness = cmd::byId($eqLogic->getConfiguration('brightness'));
+          if (is_object($cmdBrightness)) {
+            if ($value != $cmdBrightness->execCmd()) {
+              $autoDisableBrightnessCmd = $eqLogic->getCmd(null, 'auto_disable_brightness');
+              if (is_object($autoDisableBrightnessCmd)) {
+                $autoDisableBrightnessCmd->event(0);
+              }
+            } else {
+              $autoDisableBrightnessCmd = $eqLogic->getCmd(null, 'auto_disable_brightness');
+              if (is_object($autoDisableBrightnessCmd)) {
+                $autoDisableBrightnessCmd->event(1);
+              }
+            }
+          }
+        }
+    }
+  }
+  public static function enableTemperatureAuto($_option)
+  {
+    log::add(__CLASS__, 'info', '*** ' . __FUNCTION__ . ' ***');
+
+    $eqLogic = self::byId($_option['id']);
+    if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
+      log::add(__CLASS__, 'info', ' > enableTemperatureAuto action sur : ' . $eqLogic->getHumanName());
+
+      // si la valeur de la commande info temperature_color_info différente de la commande temperature_color alors la température est modifiée manuellement, on passe la commande auto_disable_temperature à 0 pour ne pas réactiver la température auto, à 1 sinon
+        $cmdTemperatureColorInfo = $eqLogic->getTemperatureStateInfoCmd();
+        if (is_object($cmdTemperatureColorInfo)) {
+          $value = $cmdTemperatureColorInfo->execCmd();
+          $cmdTemperatureColor = cmd::byId($eqLogic->getConfiguration('temperature_color'));
+          if (is_object($cmdTemperatureColor)) {
+            if ($value != $cmdTemperatureColor->execCmd()) {
+              $autoDisableTemperatureCmd = $eqLogic->getCmd(null, 'auto_disable_temperature');
+              if (is_object($autoDisableTemperatureCmd)) {
+                $autoDisableTemperatureCmd->event(0);
+              }
+            } else {
+              $autoDisableTemperatureCmd = $eqLogic->getCmd(null, 'auto_disable_temperature');
+              if (is_object($autoDisableTemperatureCmd)) {
+                $autoDisableTemperatureCmd->event(1);
+              }
+            }
+          }
+        }
     }
   }
 
   /*     * *********************Méthodes d'instance************************* */
 
+  private function getTemperatureStateInfoCmd() {
+    $temperature_color_info = $this->getConfiguration('temperature_color_info');
+    $temperature_color_info = str_replace('#', '', $temperature_color_info);
+    $cmdTemperatureColorInfo = cmd::byId($temperature_color_info);
+    return $cmdTemperatureColorInfo;
+  }
+
+  private function getBrightnessStateInfoCmd() {
+    $brightness_info = $this->getConfiguration('brightness_info');
+    $brightness_info = str_replace('#', '', $brightness_info);
+    $cmdBrightnessInfo = cmd::byId($brightness_info);
+    return $cmdBrightnessInfo;
+  }
+
   /**
    * @return listener
    */
-  private function getListener()
-  {
-    // log::add(__CLASS__, 'debug', 'getListener');
-
+  private function getStateListener() {
     return listener::byClassAndFunction(__CLASS__, 'pullRefresh', array('id' => $this->getId()));
   }
 
-  private function removeListener()
-  {
-    // log::add(__CLASS__, 'debug', 'remove Listener');
+  private function getBrightnessListener() {
+    return listener::byClassAndFunction(__CLASS__, 'enableBrightnessAuto', array('id' => $this->getId()));
+  }
 
-    $listener = $this->getListener();
+  private function getTemperatureListener() {
+    return listener::byClassAndFunction(__CLASS__, 'enableTemperatureAuto', array('id' => $this->getId()));
+  }
+
+  private function removeListeners() {
+    $listener = $this->getStateListener();
+    if (is_object($listener)) {
+      $listener->remove();
+    }
+    $listener = $this->getBrightnessListener();
+    if (is_object($listener)) {
+      $listener->remove();
+    }
+    $listener = $this->getTemperatureListener();
     if (is_object($listener)) {
       $listener->remove();
     }
   }
 
-  private function setListener()
-  {
-    // log::add(__CLASS__, 'debug', 'setListener');
-
+  private function setListeners() {
     if ($this->getIsEnable() == 0) {
-      $this->removeListener();
+      $this->removeListeners();
       return;
     }
 
@@ -108,7 +197,7 @@ class naturalLight extends eqLogic
       throw new Exception("lamp_state non renseigné");
     }
 
-    $listener = $this->getListener();
+    $listener = $this->getStateListener();
     if (!is_object($listener)) {
       $listener = new listener();
       $listener->setClass(__CLASS__);
@@ -117,8 +206,55 @@ class naturalLight extends eqLogic
     }
     $listener->emptyEvent();
     $listener->addEvent($cmd->getId());
-
     $listener->save();
+
+    if ($this->getConfiguration('temperature_auto_disable', 0) == 0) {
+      $listener = $this->getTemperatureStateListener();
+      if (is_object($listener)) {
+        $listener->remove();
+      }
+    } else {
+      $temperature_state = $this->getConfiguration('temperature_color_info');
+      $temperature_state = str_replace('#', '', $temperature_state);
+      $cmd = cmd::byId($temperature_state);
+      if (!is_object($cmd)) {
+        throw new Exception("temperature_color_info non renseigné");
+      }
+      $listener = $this->getTemperatureStateListener();
+      if (!is_object($listener)) {
+        $listener = new listener();
+        $listener->setClass(__CLASS__);
+        $listener->setFunction('enableTemperatureAuto');
+        $listener->setOption(array('id' => $this->getId()));
+      }
+      $listener->emptyEvent();
+      $listener->addEvent($cmd->getId());
+      $listener->save();
+    }
+
+    if ($this->getConfiguration('brightness_auto_disable', 0) == 0) {
+      $listener = $this->getBrightnessStateListener();
+      if (is_object($listener)) {
+        $listener->remove();
+      }
+    } else {
+      $brightness_state = $this->getConfiguration('brightness_info');
+      $brightness_state = str_replace('#', '', $brightness_state);
+      $cmd = cmd::byId($brightness_state);
+      if (!is_object($cmd)) {
+        throw new Exception("brightness_info non renseigné");
+      }
+      $listener = $this->getBrightnessStateListener();
+      if (!is_object($listener)) {
+        $listener = new listener();
+        $listener->setClass(__CLASS__);
+        $listener->setFunction('enableBrightnessAuto');
+        $listener->setOption(array('id' => $this->getId()));
+      }
+      $listener->emptyEvent();
+      $listener->addEvent($cmd->getId());
+      $listener->save();
+    }
   }
 
   // Fonction exécutée automatiquement avant la sauvegarde (création ou mise à jour) de l'équipement
@@ -245,6 +381,48 @@ class naturalLight extends eqLogic
     $brightness->save();
     unset($brightness);
 
+    $autoDisableTemperatureCmd = $this->getCmd(null, 'auto_disable_temperature');
+    if ($this->getConfiguration('temperature_auto_disable', 0) == 0) {
+      if (is_object($autoDisableTemperatureCmd)) {
+        $autoDisableTemperatureCmd->remove();
+      }
+    } else {
+      if (!is_object($autoDisableTemperatureCmd)) {
+        $autoDisableTemperatureCmd = new naturalLightCmd();
+        $autoDisableTemperatureCmd->setLogicalId('auto_disable_temperature');
+        $autoDisableTemperatureCmd->setName(__('Temperature Auto', __FILE__));
+        $autoDisableTemperatureCmd->setIsVisible(1);
+        $autoDisableTemperatureCmd->setIsHistorized(0);
+      }
+      $autoDisableTemperatureCmd->setEqLogic_id($this->getId());
+      $autoDisableTemperatureCmd->setType('info');
+      $autoDisableTemperatureCmd->setSubType('binary');
+      $autoDisableTemperatureCmd->save();
+      $autoDisableTemperatureCmd->event(1);
+    }
+    unset($autoDisableTemperatureCmd);
+
+    $autoDisableBrightnessCmd = $this->getCmd(null, 'auto_disable_brightness');
+    if ($this->getConfiguration('brightness_auto_disable', 0) == 0) {
+      if (is_object($autoDisableBrightnessCmd)) {
+        $autoDisableBrightnessCmd->remove();
+      }
+    } else {
+      if (!is_object($autoDisableBrightnessCmd)) {
+        $autoDisableBrightnessCmd = new naturalLightCmd();
+        $autoDisableBrightnessCmd->setLogicalId('auto_disable_brightness');
+        $autoDisableBrightnessCmd->setName(__('Brightness Auto', __FILE__));
+        $autoDisableBrightnessCmd->setIsVisible(1);
+        $autoDisableBrightnessCmd->setIsHistorized(0);
+      }
+      $autoDisableBrightnessCmd->setEqLogic_id($this->getId());
+      $autoDisableBrightnessCmd->setType('info');
+      $autoDisableBrightnessCmd->setSubType('binary');
+      $autoDisableBrightnessCmd->save();
+      $autoDisableBrightnessCmd->event(1);
+    }
+    unset($autoDisableBrightnessCmd);
+
     // Vérification
     log::add(__CLASS__, 'debug', '  Vérification');
     $isValid = $this->checkAllConfiguration();
@@ -258,13 +436,13 @@ class naturalLight extends eqLogic
       return;
     }
 
-    $this->setListener();    
+    $this->setListeners();
   }
 
   // Fonction exécutée automatiquement avant la suppression de l'équipement
   public function preRemove()
   {
-    $this->removeListener();
+    $this->removeListeners();
   }
 
   // Fonction exécutée automatiquement après la suppression de l'équipement
