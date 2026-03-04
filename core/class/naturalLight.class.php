@@ -1300,14 +1300,15 @@ class naturalLight extends eqLogic
   {
     // Obtenir état de la lampe
     $state = false;
-    $lamp_state = $this->getConfiguration('lamp_state');
-    $lamp_state = str_replace('#', '', $lamp_state);
-    if ($lamp_state != '') {
-      $cmd = cmd::byId($lamp_state);
-      if ($cmd == null) {
-        log::add(__CLASS__, 'error', ' Mauvaise lamp_state :' . $lamp_state);
-        throw new Exception('Mauvaise lamp_state');
-      } else {
+    $cmd = $this->getStateInfoCmd()
+    //$lamp_state = $this->getConfiguration('lamp_state');
+    //$lamp_state = str_replace('#', '', $lamp_state);
+    //if ($lamp_state != '') {
+    //  $cmd = cmd::byId($lamp_state);
+    //  if ($cmd == null) {
+    //    log::add(__CLASS__, 'error', ' Mauvaise lamp_state :' . $lamp_state);
+    //    throw new Exception('Mauvaise lamp_state');
+    //  } else {
         $state = $cmd->execCmd();
         log::add(__CLASS__, 'debug', '  lamp_state: ' . $cmd->getEqLogic()->getHumanName() . '[' . $cmd->getName() . ']:' . $state);
         if (is_numeric($state)) {
@@ -1324,11 +1325,11 @@ class naturalLight extends eqLogic
           $state = false;
         }
         log::add(__CLASS__, 'debug', '  lamp_state est donc: ' . ($state ? 'true' : 'false'));
-      }
-    } else {
-      log::add(__CLASS__, 'error', ' lamp_state non renseigné');
-      throw new Exception('lamp_state non renseigné');
-    }
+    //  }
+    //} else {
+    //  log::add(__CLASS__, 'error', ' lamp_state non renseigné');
+    //  throw new Exception('lamp_state non renseigné');
+    //}
 
     return $state;
   }
