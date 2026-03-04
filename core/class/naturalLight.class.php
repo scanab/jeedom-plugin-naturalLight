@@ -141,16 +141,24 @@ class naturalLight extends eqLogic
   /*     * *********************Méthodes d'instance************************* */
 
   private function getTemperatureStateInfoCmd() {
-    $temperature_color_info = $this->getConfiguration('temperature_color_info');
-    $temperature_color_info = str_replace('#', '', $temperature_color_info);
-    $cmdTemperatureColorInfo = cmd::byId($temperature_color_info);
+    $temperatureColorCmdId = $this->getConfiguration('temperature_color');
+    $temperatureColorCmdId = str_replace('#', '', $temperatureColorCmdId);
+    $cmdTemperatureColor = cmd::byId($temperatureColorCmdId);
+    $cmdTemperatureColorInfo = $cmdTemperatureColor->getCmdValue();
+    //$temperature_color_info = $this->getConfiguration('temperature_color_info');
+    //$temperature_color_info = str_replace('#', '', $temperature_color_info);
+    //$cmdTemperatureColorInfo = cmd::byId($temperature_color_info);
     return $cmdTemperatureColorInfo;
   }
 
   private function getBrightnessStateInfoCmd() {
-    $brightness_info = $this->getConfiguration('brightness_info');
-    $brightness_info = str_replace('#', '', $brightness_info);
-    $cmdBrightnessInfo = cmd::byId($brightness_info);
+    $brightnessCmdId = $this->getConfiguration('brightness');
+    $brightnessCmdId = str_replace('#', '', $brightnessCmdId);
+    $cmdBrightness = cmd::byId($brightnessCmdId);
+    $cmdBrightnessInfo = $cmdBrightness->getCmdValue();
+    //$brightness_info = $this->getConfiguration('brightness_info');
+    //$brightness_info = str_replace('#', '', $brightness_info);
+    //$cmdBrightnessInfo = cmd::byId($brightness_info);
     return $cmdBrightnessInfo;
   }
 
