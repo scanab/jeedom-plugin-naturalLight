@@ -169,7 +169,7 @@ class naturalLight extends eqLogic
   }
   
   private function getCmdFromConfiguration(string $configurationKey = null) {
-    if (configurationKey == null) {
+    if ($configurationKey == null) {
       throw new Exception(__METHOD__ . " : La clé de configuration doit être renseignée");
     }
     $cmd_id = $this->getConfiguration($configurationKey);
@@ -229,7 +229,7 @@ class naturalLight extends eqLogic
     $listener->addEvent($cmd->getId());
     $listener->save();
 
-    $listener = $this->getTemperatureStateListener();
+    $listener = $this->getTemperatureListener();
     if ($this->getConfiguration('temperature_auto_disable', 0) == 0) {
       if (is_object($listener)) {
         $listener->remove();
@@ -247,7 +247,7 @@ class naturalLight extends eqLogic
       $listener->save();
     }
 
-    $listener = $this->getBrightnessStateListener();
+    $listener = $this->getBrightnessListener();
     if ($this->getConfiguration('brightness_auto_disable', 0) == 0) {
       if (is_object($listener)) {
         $listener->remove();
@@ -1274,7 +1274,7 @@ class naturalLight extends eqLogic
   {
     // Obtenir état de la lampe
     $state = false;
-    $cmd = $this->getStateInfoCmd()
+    $cmd = $this->getStateInfoCmd();
     //$lamp_state = $this->getConfiguration('lamp_state');
     //$lamp_state = str_replace('#', '', $lamp_state);
     //if ($lamp_state != '') {
