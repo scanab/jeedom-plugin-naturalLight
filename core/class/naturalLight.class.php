@@ -1274,7 +1274,7 @@ class naturalLight extends eqLogic
   {
     // Obtenir état de la lampe
     $state = false;
-    $cmd = $this->getStateInfoCmd()
+    $cmd = $this->getStateInfoCmd();
     //$lamp_state = $this->getConfiguration('lamp_state');
     //$lamp_state = str_replace('#', '', $lamp_state);
     //if ($lamp_state != '') {
