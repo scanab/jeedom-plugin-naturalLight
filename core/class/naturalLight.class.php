@@ -57,8 +57,6 @@ class naturalLight extends eqLogic
    */
   public static function pullRefresh($_option)
   {
-    log::add(__CLASS__, 'info', '*** ' . __FUNCTION__ . ' ***');
-
     $eqLogic = self::byId($_option['id']);
     if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
       log::add(__CLASS__, 'info', ' > pullRefresh action sur : ' . $eqLogic->getHumanName());
@@ -81,34 +79,29 @@ class naturalLight extends eqLogic
 
   public static function enableBrightnessAuto($_option)
   {
-    log::add(__CLASS__, 'info', '*** ' . __FUNCTION__ . ' ***');
-
     $eqLogic = self::byId($_option['id']);
     if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
       log::add(__CLASS__, 'info', ' > enableBrightnessAuto action sur : ' . $eqLogic->getHumanName());
 
       // si la valeur de la commande info brightness_info différente de la commande brightness alors la luminosité est modifiée manuellement, on passe la commande brightness_auto à 0 pour ne pas réactiver la luminosité auto, à 1 sinon
       $cmdBrightnessColorInfo = $eqLogic->getBrightnessStateInfoCmd();
-      $value = $cmdBrightnessColorInfo->execCmd();
+      $currentValue = $cmdBrightnessColorInfo->execCmd();
       $cmdBrightness = $eqLogic->getCmdFromConfiguration('brightness');
       $autoDisableBrightnessCmd = $eqLogic->getBrightnessAutoDisableCmd();
-      $autoDisableBrightnessCmd->event($value == $cmdBrightness->execCmd());
+      $autoDisableBrightnessCmd->event($currentValue == $cmdBrightness->execCmd());
     }
   }
   public static function enableTemperatureAuto($_option)
   {
-    log::add(__CLASS__, 'info', '*** ' . __FUNCTION__ . ' ***');
-
     $eqLogic = self::byId($_option['id']);
     if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
       log::add(__CLASS__, 'info', ' > enableTemperatureAuto action sur : ' . $eqLogic->getHumanName());
 
       // si la valeur de la commande info temperature_color_info différente de la commande temperature_color alors la température est modifiée manuellement, on passe la commande temperature_auto à 0 pour ne pas réactiver la température auto, à 1 sinon
-      $cmdTemperatureColorInfo = $eqLogic->getTemperatureStateInfoCmd();
-      $value = $cmdTemperatureColorInfo->execCmd();
-      $cmdTemperatureColor = cmd::byId($eqLogic->getConfiguration('temperature_color'));
-      $autoDisableTemperatureCmd = $eqLogic->getTemperatureAutoDisableCmd();
-      $autoDisableTemperatureCmd->event($value == $cmdTemperatureColor->execCmd());
+      $currentValue = $eqLogic->getTemperatureStateInfoCmd()->execCmd();
+      $calculatedValue = $eqLogic->getCmdFromConfiguration('temperature_color')->execCmd();
+      log::add(__CLASS__, 'debug', '  currentValue=' . $currentValue . ' calculatedValue=' . $calculatedValue);
+      $eqLogic->getTemperatureAutoDisableCmd()->event($currentValue == $calculatedValue);
     }
   }
 
@@ -753,7 +746,7 @@ class naturalLight extends eqLogic
       if ($sunElevation == null) {
         $sunElevation = $this->computeSunElevation();
       }
-      // set Sun Elevation value
+      // set Sun Elevation currentValue
       $cmdSunElevation->event($sunElevation);
 
       $activated = $this->getConfiguration('brightness_enable');
@@ -780,7 +773,7 @@ class naturalLight extends eqLogic
             // Executer brightness
             $cmd = $this->getLampBrightnessCommand();
 
-            // set brightness value
+            // set brightness currentValue
             // $cmd->execCmd($brightness);
             $cmd->execCmd(array('slider' => $brightness, 'transition' => 300));
           } else {
@@ -826,7 +819,7 @@ class naturalLight extends eqLogic
         $temp_color = $this->computeTempColorByLimit($temp_color);
         log::add(__CLASS__, 'info', 'température couleur: ' . $temp_color);
 
-        // set temp_color value
+        // set temp_color currentValue
         $cmdTempColor->event($temp_color);
       
         // Gestion de la condition
@@ -840,7 +833,7 @@ class naturalLight extends eqLogic
             log::add(__CLASS__, 'info', 'lampe allumée');
             $cmd = $this->getLampTemperatureCommand();
             $currentColorTempValue = cmd::byId($cmd->getValue())->execCmd();
-            log::add(__CLASS__, 'info', 'color temp value : ' . $currentColorTempValue);
+            log::add(__CLASS__, 'info', 'color temp currentValue : ' . $currentColorTempValue);
             if ($temp_color != $currentColorTempValue) {
               $cmd->execCmd(array('slider' => $temp_color, 'transition' => 300));
             }
@@ -1283,7 +1276,7 @@ class naturalLight extends eqLogic
     //    log::add(__CLASS__, 'error', ' Mauvaise lamp_state :' . $lamp_state);
     //    throw new Exception('Mauvaise lamp_state');
     //  } else {
-        $state = $cmd->execCmd();
+    $state = $cmd->execCmd();
         log::add(__CLASS__, 'debug', '  lamp_state: ' . $cmd->getEqLogic()->getHumanName() . '[' . $cmd->getName() . ']:' . $state);
         if (is_numeric($state)) {
           log::add(__CLASS__, 'debug', '  lamp_state: bool');
