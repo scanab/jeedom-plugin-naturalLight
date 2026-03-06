@@ -86,7 +86,7 @@ class naturalLight extends eqLogic
 
       // si la valeur de la commande info brightness_info différente de la commande brightness alors la luminosité est modifiée manuellement, on passe la commande brightness_auto à 0 pour ne pas réactiver la luminosité auto, à 1 sinon
       $currentValue = $eqLogic->getBrightnessStateInfoCmd()->execCmd();
-      $calculatedValue = $eqLogic->getCmd(null, 'brightness_color')->execCmd();
+      $calculatedValue = $eqLogic->getNaturalLightCmd('brightness')->execCmd();
       log::add(__CLASS__, 'debug', '  currentValue=' . $currentValue . ' calculatedValue=' . $calculatedValue);
       $eqLogic->getBrightnessAutoDisableCmd()->event($currentValue == $calculatedValue);
     }
@@ -98,7 +98,7 @@ class naturalLight extends eqLogic
 
       // si la valeur de la commande info temperature_color_info différente de la commande temperature_color alors la température est modifiée manuellement, on passe la commande temperature_auto à 0 pour ne pas réactiver la température auto, à 1 sinon
       $currentValue = $eqLogic->getTemperatureStateInfoCmd()->execCmd();
-      $calculatedValue = $eqLogic->getCmd(null, 'temperature_color')->execCmd();
+      $calculatedValue = $eqLogic->getNaturalLightCmd('temperature_color')->execCmd();
       log::add(__CLASS__, 'debug', '  currentValue=' . $currentValue . ' calculatedValue=' . $calculatedValue);
       $eqLogic->getTemperatureAutoDisableCmd()->event($currentValue == $calculatedValue);
     }
