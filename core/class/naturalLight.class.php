@@ -749,7 +749,7 @@ class naturalLight extends eqLogic
 
       $activated = $this->getConfiguration('brightness_enable');
       log::add(__CLASS__, 'debug', '  Brightness activation:' . $activated);
-      if ($activated == 0 || $this->isBrightnessAutoDisabled()) {
+      if (!$force && ($activated == 0 || $this->isBrightnessAutoDisabled())) {
         log::add(__CLASS__, 'debug', '  Luminosité non activé indique arrêt');
       } else {
         // Calcul pour l'historique
@@ -798,7 +798,7 @@ class naturalLight extends eqLogic
 
       $activated = $this->getConfiguration('temperature_enable');
       log::add(__CLASS__, 'debug', '  Temperature activation:' . $activated);
-      if ($activated == 0 || $this->isTemperatureAutoDisabled()) {
+      if (!$force && ($activated == 0 || $this->isTemperatureAutoDisabled())) {
         log::add(__CLASS__, 'debug', '  Temperature non activé indique arrêt');
       } else {
         // Calcul pour l'historique
