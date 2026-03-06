@@ -84,22 +84,20 @@ class naturalLight extends eqLogic
       log::add(__CLASS__, 'info', ' > enableBrightnessAuto action sur : ' . $eqLogic->getHumanName());
 
       // si la valeur de la commande info brightness_info différente de la commande brightness alors la luminosité est modifiée manuellement, on passe la commande brightness_auto à 0 pour ne pas réactiver la luminosité auto, à 1 sinon
-      $cmdBrightnessColorInfo = $eqLogic->getBrightnessStateInfoCmd();
-      $currentValue = $cmdBrightnessColorInfo->execCmd();
-      $cmdBrightness = $eqLogic->getCmdFromConfiguration('brightness');
-      $autoDisableBrightnessCmd = $eqLogic->getBrightnessAutoDisableCmd();
-      $autoDisableBrightnessCmd->event($currentValue == $cmdBrightness->execCmd());
+      $currentValue = $eqLogic->getBrightnessStateInfoCmd()->execCmd();
+      $calculatedValue = $eqLogic->getCmd(null, 'brightness_color')->execCmd();
+      log::add(__CLASS__, 'debug', '  currentValue=' . $currentValue . ' calculatedValue=' . $calculatedValue);
+      $eqLogic->getBrightnessAutoDisableCmd()->event($currentValue == $calculatedValue);
     }
   }
-  public static function enableTemperatureAuto($_option)
-  {
+  public static function enableTemperatureAuto($_option) {
     $eqLogic = self::byId($_option['id']);
     if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
       log::add(__CLASS__, 'info', ' > enableTemperatureAuto action sur : ' . $eqLogic->getHumanName());
 
       // si la valeur de la commande info temperature_color_info différente de la commande temperature_color alors la température est modifiée manuellement, on passe la commande temperature_auto à 0 pour ne pas réactiver la température auto, à 1 sinon
       $currentValue = $eqLogic->getTemperatureStateInfoCmd()->execCmd();
-      $calculatedValue = $eqLogic->getCmdFromConfiguration('temperature_color')->execCmd();
+      $calculatedValue = $eqLogic->getCmd(null, 'temperature_color')->execCmd();
       log::add(__CLASS__, 'debug', '  currentValue=' . $currentValue . ' calculatedValue=' . $calculatedValue);
       $eqLogic->getTemperatureAutoDisableCmd()->event($currentValue == $calculatedValue);
     }
@@ -555,13 +553,13 @@ class naturalLight extends eqLogic
     if ($minValue == '') {
       array_push($messages, 'minValue non renseignée');
       $isValid = false;
-    } else if ( !is_numeric($minValue)){
+    } elseif ( !is_numeric($minValue)){
       array_push($messages, 'minValue doit être un nombre');
       $isValid = false;
-    } else if ($minValue < 0) {
+    } elseif ($minValue < 0) {
       array_push($messages, 'minValue doit être un nombre positif');
       $isValid = false;
-    } else if (isset($minValueDefault) &&
+    } elseif (isset($minValueDefault) &&
              is_numeric($minValueDefault) &&
              $minValue < $minValueDefault) {
       array_push($messages, 'minValue doit être un supérieure à la valeur minValueDefault');
@@ -574,13 +572,13 @@ class naturalLight extends eqLogic
     if ($maxValue == '') {
       array_push($messages, 'maxValue non renseignée');
       $isValid = false;
-    } else if ( !is_numeric($maxValue)){
+    } elseif ( !is_numeric($maxValue)){
       array_push($messages, 'maxValue doit être un nombre');
       $isValid = false;
-    } else if ($maxValue < 0) {
+    } elseif ($maxValue < 0) {
       array_push($messages, 'maxValue doit être un nombre positif');
       $isValid = false;
-    } else if (isset($maxValueDefault) &&
+    } elseif (isset($maxValueDefault) &&
               is_numeric($maxValueDefault) &&
               $maxValue > $maxValueDefault) {
       array_push($messages, 'maxValue doit être un inférieure à la valeur maxValueDefault');
@@ -643,13 +641,13 @@ class naturalLight extends eqLogic
     if ($minValue == '') {
       array_push($messages, 'minValue non renseignée');
       $isValid = false;
-    } else if ( !is_numeric($minValue)){
+    } elseif ( !is_numeric($minValue)){
       array_push($messages, 'minValue doit être un nombre');
       $isValid = false;
-    } else if ($minValue < 0) {
+    } elseif ($minValue < 0) {
       array_push($messages, 'minValue doit être un nombre positif');
       $isValid = false;
-    } else if (isset($minValueDefault) &&
+    } elseif (isset($minValueDefault) &&
              is_numeric($minValueDefault) &&
              $minValue < $minValueDefault) {
       array_push($messages, 'minValue doit être un supérieure à la valeur minValueDefault');
@@ -662,13 +660,13 @@ class naturalLight extends eqLogic
     if ($maxValue == '') {
       array_push($messages, 'maxValue non renseignée');
       $isValid = false;
-    } else if ( !is_numeric($maxValue)){
+    } elseif ( !is_numeric($maxValue)){
       array_push($messages, 'maxValue doit être un nombre');
       $isValid = false;
-    } else if ($maxValue < 0) {
+    } elseif ($maxValue < 0) {
       array_push($messages, 'maxValue doit être un nombre positif');
       $isValid = false;
-    } else if (isset($maxValueDefault) &&
+    } elseif (isset($maxValueDefault) &&
               is_numeric($maxValueDefault) &&
               $maxValue > $maxValueDefault) {
       array_push($messages, 'maxValue doit être un inférieure à la valeur maxValueDefault');
@@ -686,13 +684,13 @@ class naturalLight extends eqLogic
     if ($duration == '') {
       array_push($messages, 'durée matin doit être renseigné');
       $isValid = false;
-    } else if (!is_numeric($duration)) {
+    } elseif (!is_numeric($duration)) {
       array_push($messages, 'durée matin doit être un nombre');
       $isValid = false;
-    } else if ($duration < 0) {
+    } elseif ($duration < 0) {
       array_push($messages, 'durée matin doit être un nombre positif');
       $isValid = false;
-    } else if ($duration > 1440) {
+    } elseif ($duration > 1440) {
       array_push($messages, 'durée matin doit être un nombre raisonnable');
       $isValid = false;
     }
@@ -702,13 +700,13 @@ class naturalLight extends eqLogic
     if ($duration == '') {
       array_push($messages, 'durée soir doit être renseigné');
       $isValid = false;
-    } else if (!is_numeric($duration)) {
+    } elseif (!is_numeric($duration)) {
       array_push($messages, 'durée soir doit être un nombre');
       $isValid = false;
-    } else if ($duration < 0) {
+    } elseif ($duration < 0) {
       array_push($messages, 'durée soir doit être un nombre positif');
       $isValid = false;
-    } else if ($duration > 1440) {
+    } elseif ($duration > 1440) {
       array_push($messages, 'durée soir doit être un nombre raisonnable');
       $isValid = false;
     }
@@ -720,8 +718,7 @@ class naturalLight extends eqLogic
     return $isValid;
   }
 
-  public function computeLamp(float $sunElevation = null, int $temp_color = null)
-  {
+  public function computeLamp(float $sunElevation = null, int $temp_color = null) {
     log::add(__CLASS__, 'debug', 'fonction: ' . __FUNCTION__);
 
     try {
@@ -940,22 +937,22 @@ class naturalLight extends eqLogic
       throw new Exception();
     }
 
-    $SD = new SolarData\SolarData();
-    $SD->setObserverPosition($latitude, $longitude, $altitude);
-    $SD->setObserverDate(date('Y'), date('n'), date('j'));
-    $SD->setObserverTime(date('G'), date('i'), date('s'));
+    $solarData = new SolarData\SolarData();
+    $solarData->setObserverPosition($latitude, $longitude, $altitude);
+    $solarData->setObserverDate(date('Y'), date('n'), date('j'));
+    $solarData->setObserverTime(date('G'), date('i'), date('s'));
     //ARGS : difference in seconds between the Earth rotation time and the Terrestrial Time (TT)/
-    $SD->setDeltaTime(67);
-    $SD->setObserverTimezone(date('Z') / 3600);
+    $solarData->setDeltaTime(67);
+    $solarData->setObserverTimezone(date('Z') / 3600);
 
     /* ARGS : Observer mean pressure in Millibar */
-    $SD->setObserverAtmosphericPressure(820);
+    $solarData->setObserverAtmosphericPressure(820);
 
     /* ARGS : Observer mean temperature in Celsius */
-    $SD->setObserverAtmosphericTemperature(11.0);
+    $solarData->setObserverAtmosphericTemperature(11.0);
 
-    $SunPosition = $SD->calculate();
-    $sunElevation = floatval(round($SunPosition->e0°, 2));
+    $sunPosition = $solarData->calculate();
+    $sunElevation = floatval(round($sunPosition->e0°, 2));
     log::add(__CLASS__, 'debug', '  sunElevation :' . $sunElevation);
 
     return floatval($sunElevation);
@@ -983,7 +980,7 @@ class naturalLight extends eqLogic
 
     // Calcul de la température couleur
     $temp_color = intval(1000000 / (4791.67 - 3290.66 / (1 + 0.222 * $correctedSunElevation ** 0.81)));
-    log::add(__CLASS__, 'debug', '  temp_color calculé SunPosition: ' . $temp_color);
+    log::add(__CLASS__, 'debug', '  temp_color calculé sunPosition: ' . $temp_color);
 
     return $temp_color;
   }
@@ -1049,8 +1046,7 @@ class naturalLight extends eqLogic
    * @param condition Condition à évaluer
    * @return True si la condition est vide ou valide, false sinon
    */
-  private function evaluateCondition($condition): bool
-  {
+  private function evaluateCondition($condition): bool {
     log::add(__CLASS__, 'debug', '  condition : ' . $condition);
     $conditionResult = true;
     if ($condition != '') {
@@ -1078,7 +1074,9 @@ class naturalLight extends eqLogic
         date_default_timezone_set($configs['timezone']);
       }
     } catch (Exception $e) {
+      log::add(__CLASS__, 'error', 'erreur lors de la récupération de la timezone : ' . $e->getMessage());
     } catch (Error $e) {
+      log::add(__CLASS__, 'error', 'erreur lors de la récupération de la timezone : ' . $e->getMessage());
     }
 
     $brightness = 0;
@@ -1138,19 +1136,19 @@ class naturalLight extends eqLogic
       log::add(__CLASS__, 'debug', '  période: jour');
 
       $brightness = $maxBrightness;
-    } else if ($now < $todayMorningTime || $now > $todayEveningEndTime) {
+    } elseif ($now < $todayMorningTime || $now > $todayEveningEndTime) {
       // nuit
       log::add(__CLASS__, 'debug', '  période: nuit');
 
       $brightness = $minBrightness;
-    } else if ($now >= $todayMorningTime && $now <= $todayMorningEndTime) {
+    } elseif ($now >= $todayMorningTime && $now <= $todayMorningEndTime) {
       // matinée
       log::add(__CLASS__, 'debug', '  période: matinée');
       $brightness = intval(($now - $todayMorningTime)
         * ($maxBrightness - $minBrightness)
         / ($morningDuration * 60))
         + intval($minBrightness);
-    } else if ($now >= $todayEveningTime && $now <= $todayEveningEndTime) {
+    } elseif ($now >= $todayEveningTime && $now <= $todayEveningEndTime) {
       // soirée
       log::add(__CLASS__, 'debug', '  période: soirée');
       $brightness = intval(($todayEveningEndTime - $now)
@@ -1164,8 +1162,7 @@ class naturalLight extends eqLogic
     return $brightness;
   }
 
-  private function computeBrightnessByLimit($brightness): int
-  {
+  private function computeBrightnessByLimit($brightness): int {
     log::add(__CLASS__, 'debug', 'fonction: ' . __FUNCTION__);
     
     // Recherche de la configuration
@@ -1263,8 +1260,7 @@ class naturalLight extends eqLogic
    * allumée 1 ou On
    * Eteint 0 ou Off
    */
-  private function getLampState(): bool
-  {
+  private function getLampState(): bool {
     // Obtenir état de la lampe
     $state = false;
     $cmd = $this->getStateInfoCmd();
@@ -1281,10 +1277,10 @@ class naturalLight extends eqLogic
         if (is_numeric($state)) {
           log::add(__CLASS__, 'debug', '  lamp_state: bool');
           $state = boolval($state);
-        } else  if (strcasecmp('on', $state) === 0) {
+        } elseif (strcasecmp('on', $state) === 0) {
           log::add(__CLASS__, 'debug', '  lamp_state: on');
           $state = true;
-        } else  if (strcasecmp('off', $state) === 0) {
+        } elseif (strcasecmp('off', $state) === 0) {
           log::add(__CLASS__, 'debug', '  lamp_state: off');
           $state = false;
         } else {
@@ -1304,8 +1300,7 @@ class naturalLight extends eqLogic
   /*     * **********************Getteur Setteur*************************** */
 }
 
-class naturalLightCmd extends cmd
-{
+class naturalLightCmd extends cmd {
   /*     * *************************Attributs****************************** */
 
   /*
@@ -1320,14 +1315,12 @@ class naturalLightCmd extends cmd
   /*
   * Permet d'empêcher la suppression des commandes même si elles ne sont pas dans la nouvelle configuration de l'équipement envoyé en JS
     */
-  public function dontRemoveCmd()
-  {
+  public function dontRemoveCmd() {
     return true;
   }
 
   // Exécution d'une commande
-  public function execute($_options = array())
-  {
+  public function execute($_options = array()) {
     log::add('naturalLight', 'info', '*** ' . __FUNCTION__ . ' ***');
 
     if ($this->getLogicalId() == 'refresh') {
