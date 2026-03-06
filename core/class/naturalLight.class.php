@@ -65,7 +65,8 @@ class naturalLight extends eqLogic
 
       $lamp_state = $eqLogic->getLampState();
       if ($lamp_state) {
-        $eqLogic->computeLamp(null, null, true);
+        //$eqLogic->computeLamp(null, null, true);
+        $eqLogic->computeLamp();
       } else {
         $autoDisableTemperatureCmd = $eqLogic->getBrightnessAutoDisableCmd(false);
         if (is_object($autoDisableTemperatureCmd)) {
@@ -81,7 +82,7 @@ class naturalLight extends eqLogic
 
   public static function enableBrightnessAuto($_option): void {
     $eqLogic = self::byId($_option['id']);
-    if (is_object($eqLogic) && $eqLogic instanceof naturalLight && $eqLogic->getIsEnable() == 1) {
+    if (is_object($eqLogic) && $eqLogic instanceof naturalLight && $eqLogic->getIsEnable() == 1 && $eqLogic->getLampState()) {
       log::add(__CLASS__, 'info', ' > enableBrightnessAuto action sur : ' . $eqLogic->getHumanName());
 
       // si la valeur de la commande info brightness_info différente de la commande brightness alors la luminosité est modifiée manuellement, on passe la commande brightness_auto à 0 pour ne pas réactiver la luminosité auto, à 1 sinon
@@ -93,7 +94,7 @@ class naturalLight extends eqLogic
   }
   public static function enableTemperatureAuto($_option): void {
     $eqLogic = self::byId($_option['id']);
-    if (is_object($eqLogic) && $eqLogic instanceof naturalLight && $eqLogic->getIsEnable() == 1) {
+    if (is_object($eqLogic) && $eqLogic instanceof naturalLight && $eqLogic->getIsEnable() == 1 && $eqLogic->getLampState()) {
       log::add(__CLASS__, 'info', ' > enableTemperatureAuto action sur : ' . $eqLogic->getHumanName());
 
       // si la valeur de la commande info temperature_color_info différente de la commande temperature_color alors la température est modifiée manuellement, on passe la commande temperature_auto à 0 pour ne pas réactiver la température auto, à 1 sinon
