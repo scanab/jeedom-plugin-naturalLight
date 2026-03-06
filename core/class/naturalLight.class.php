@@ -774,7 +774,7 @@ class naturalLight extends eqLogic
             // Executer brightness
             $cmd = $this->getLampBrightnessCommand();
             $currentBrightnessValue = cmd::byId($cmd->getValue())->execCmd();
-            log::add(__CLASS__, 'info', 'brightness currentValue : ' . $currentBrightnessValue . '/ calculated brightness: ' . $brightness );
+            log::add(__CLASS__, 'info', 'brightness currentValue : ' . $currentBrightnessValue . ' / calculated brightness: ' . $brightness );
 
             if ($brightness != $currentBrightnessValue || $force) {
               // set brightness currentValue
@@ -839,7 +839,7 @@ class naturalLight extends eqLogic
             log::add(__CLASS__, 'info', 'lampe allumée');
             $cmd = $this->getLampTemperatureCommand();
             $currentColorTempValue = cmd::byId($cmd->getValue())->execCmd();
-            log::add(__CLASS__, 'info', 'color temp currentValue : ' . $currentColorTempValue . '/ calculated color temp: ' . $temp_color );
+            log::add(__CLASS__, 'info', 'color temp currentValue : ' . $currentColorTempValue . ' / calculated color temp: ' . $temp_color );
             if ($temp_color != $currentColorTempValue || $force) {
               log::add(__CLASS__,'info', 'Envoie de la température couleur ' . $temp_color . ' à la lampe');
               //$cmd->execCmd($temp_color);
