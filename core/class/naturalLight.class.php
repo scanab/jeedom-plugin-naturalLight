@@ -755,6 +755,8 @@ class naturalLight extends eqLogic
         // Calcul pour l'historique
         $brightness = $this->computeBrightness();
         $brightness = $this->computeBrightnessByLimit($brightness);
+        log::add(__CLASS__, 'info', 'luminosité calculée : ' . $brightness);
+        
         // set brightness
         $cmdBrightness->event($brightness);
 
@@ -762,7 +764,7 @@ class naturalLight extends eqLogic
         $condition = $this->getConfiguration('brightnessCondition');
         $conditionResult = $this->evaluateCondition($condition);
         if (!$conditionResult) {
-          log::add(__CLASS__, 'info', 'condition brightness indique arrêt');
+          log::add(__CLASS__, 'info', "La condition de brightness n'est pas vérifiée");
         } else {
           // Lumière éteinte : on ne fait rien
           if ($cmdState) {
@@ -770,13 +772,14 @@ class naturalLight extends eqLogic
 
             // Executer brightness
             $cmd = $this->getLampBrightnessCommand();
-            $currentBrihtnessTempValue = cmd::byId($cmd->getValue())->execCmd();
-            log::add(__CLASS__, 'info', 'color temp currentValue : ' . $currentColorTempValue);
+            $currentBrightnessValue = cmd::byId($cmd->getValue())->execCmd();
+            log::add(__CLASS__, 'info', 'brightness currentValue : ' . $currentBrightnessValue . '/ calculated brightness: ' . $brightness );
 
-            if ($brightness != $currentBrihtnessTempValue || $force) {
+            if ($brightness != $currentBrightnessValue || $force) {
               // set brightness currentValue
-              $cmd->execCmd($brightness);
-              //$cmd->execCmd(json_encode(array('slider' => $brightness, 'transition' => 300)));
+              //$cmd->execCmd($brightness);
+              log::add(__CLASS__,'info', 'Envoie de la luminosité ' . $brightness . ' à la lampe');
+              $cmd->execCmd(json_encode(array('slider' => $brightness, 'transition' => 300)));
             }
           } else {
             log::add(__CLASS__, 'info', 'lampe éteinte');
@@ -819,7 +822,7 @@ class naturalLight extends eqLogic
 
         // Calcul de la température couleur gérable par l'équipement
         $temp_color = $this->computeTempColorByLimit($temp_color);
-        log::add(__CLASS__, 'info', 'température couleur: ' . $temp_color);
+        log::add(__CLASS__, 'info', 'température couleur calculée : ' . $temp_color);
 
         // set temp_color currentValue
         $cmdTempColor->event($temp_color);
@@ -828,17 +831,18 @@ class naturalLight extends eqLogic
         $condition = $this->getConfiguration('temperatureCondition');
         $conditionResult = $this->evaluateCondition($condition);
         if (!$conditionResult) {
-          log::add(__CLASS__, 'info', 'condition Température couleur indique arrêt');
+          log::add(__CLASS__, 'info', "La condition de température n'est pas vérifiée");
         } else {
           // Lumière éteinte : on ne fait rien
           if ($cmdState) {
             log::add(__CLASS__, 'info', 'lampe allumée');
             $cmd = $this->getLampTemperatureCommand();
             $currentColorTempValue = cmd::byId($cmd->getValue())->execCmd();
-            log::add(__CLASS__, 'info', 'color temp currentValue : ' . $currentColorTempValue);
+            log::add(__CLASS__, 'info', 'color temp currentValue : ' . $currentColorTempValue . '/ calculated color temp: ' . $temp_color );
             if ($temp_color != $currentColorTempValue || $force) {
-              $cmd->execCmd($temp_color);
-              //$cmd->execCmd(json_encode(array('slider' => $temp_color, 'transition' => 300)));
+              log::add(__CLASS__,'info', 'Envoie de la température couleur ' . $temp_color . ' à la lampe');
+              //$cmd->execCmd($temp_color);
+              $cmd->execCmd(json_encode(array('slider' => $temp_color, 'transition' => 300)));
             }
           } else {
             log::add(__CLASS__, 'info', 'lampe éteinte');
@@ -992,7 +996,7 @@ class naturalLight extends eqLogic
    * @param temp_color Température couleur en mired
    * @return Température couleur en pourcentage
    */
-  private function computeTempColorForPercent($temp_color): int {
+  private function computeTempColorForPercent(int $temp_color): int {
     log::add(__CLASS__, 'debug', '  gestion en pourcentage');
 
     // plugin gérant la notion de pourcentage
@@ -1014,7 +1018,7 @@ class naturalLight extends eqLogic
    * @param temp_color Température couleur en Kelvin
    * @return Température couleur en Kelvin
    */
-  private function computeTempColorForKelvin($temp_color): int {
+  private function computeTempColorForKelvin(int $temp_color): int {
     log::add(__CLASS__, 'debug', '  gestion en Kelvin');
 
     $temp_color = intval(1000000 / $temp_color);
