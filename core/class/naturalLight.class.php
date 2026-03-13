@@ -107,7 +107,7 @@ class naturalLight extends eqLogic
 
   /*     * *********************Méthodes d'instance************************* */
 
-  private function getTemperatureStateInfoCmd($throwEx = true): cmd {
+  private function getTemperatureStateInfoCmd($throwEx = true) {
     $cmdTemperatureColor = $this->getCmdFromConfiguration('temperature_color');
     $cmdTemperatureColorInfo = $cmdTemperatureColor->getCmdValue();
     if ($throwEx && !is_object($cmdTemperatureColorInfo)) {
@@ -116,7 +116,7 @@ class naturalLight extends eqLogic
     return $cmdTemperatureColorInfo;
   }
 
-  private function getBrightnessStateInfoCmd($throwEx = true): cmd {
+  private function getBrightnessStateInfoCmd($throwEx = true) {
     $cmdBrightness = $this->getCmdFromConfiguration('brightness');
     $cmdBrightnessInfo = $cmdBrightness->getCmdValue();
     if ($throwEx && !is_object($cmdBrightnessInfo)) {
@@ -125,19 +125,19 @@ class naturalLight extends eqLogic
     return $cmdBrightnessInfo;
   }
 
-  private function getStateInfoCmd($throwEx = true): cmd {
+  private function getStateInfoCmd($throwEx = true) {
     return $this->getCmdFromConfiguration('lamp_state', $throwEx);
   }
 
-  private function getTemperatureAutoDisableCmd($throwEx = true): naturalLightCmd {
+  private function getTemperatureAutoDisableCmd($throwEx = true) {
     return $this->getNaturalLightCmd('temperature_auto', $throwEx);
   }
 
-  private function getBrightnessAutoDisableCmd($throwEx = true): naturalLightCmd {
+  private function getBrightnessAutoDisableCmd($throwEx = true) {
     return $this->getNaturalLightCmd('brightness_auto', $throwEx);
   }
 
-  private function getNaturalLightCmd(string $logicalId, bool $throwEx = true): naturalLightCmd {
+  private function getNaturalLightCmd(string $logicalId, bool $throwEx = true) {
     $cmd = $this->getCmd(null, $logicalId);
     if ($throwEx && !is_object($cmd)) {
       throw new NaturalLightException("Cmd $logicalId absente");
