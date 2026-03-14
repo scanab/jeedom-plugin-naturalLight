@@ -161,7 +161,7 @@ class naturalLight extends eqLogic
     }
   }
   
-  private function getCmdFromConfiguration(string $configurationKey = '', bool $throwEx = true): cmd {
+  private function getCmdFromConfiguration(string $configurationKey = '', bool $throwEx = true) {
     if ($configurationKey == null || $configurationKey == '') {
       throw new NaturalLightException(__METHOD__ . " : La clé de configuration doit être renseignée");
     }
@@ -177,15 +177,15 @@ class naturalLight extends eqLogic
   /**
    * @return listener
    */
-  private function getStateListener(): listener {
+  private function getStateListener() {
     return listener::byClassAndFunction(__CLASS__, 'pullRefresh', array('id' => $this->getId()));
   }
 
-  private function getBrightnessListener(): listener {
+  private function getBrightnessListener() {
     return listener::byClassAndFunction(__CLASS__, 'enableBrightnessAuto', array('id' => $this->getId()));
   }
 
-  private function getTemperatureListener(): listener {
+  private function getTemperatureListener() {
     return listener::byClassAndFunction(__CLASS__, 'enableTemperatureAuto', array('id' => $this->getId()));
   }
 
