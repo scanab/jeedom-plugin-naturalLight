@@ -11,11 +11,10 @@
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0,
-	"changelog": "https://github.com/Arnaud69Jeedom/naturalLight/blob/master/docs/#language#/changelog.md",
-	"documentation": "https://github.com/Arnaud69Jeedom/naturalLight/blob/master/docs/#language#/index.md",
-	
-	"changelog_beta": "https://github.com/Arnaud69Jeedom/naturalLight/blob/beta/docs/#language#/changelog.md",
-	"documentation_beta": "https://github.com/Arnaud69Jeedom/naturalLight/blob/beta/docs/#language#/index.md",
+	"changelog" : "https://scanab.github.io/jeedom-plugin-naturalLight/#language#/changelog",
+	"documentation" : "https://scanab.github.io/jeedom-plugin-naturalLight/#language#/",
+	"changelog_beta" : "https://scanab.github.io/jeedom-plugin-naturalLight/#language#/changelog_beta",
+	"documentation_beta" : "https://scanab.github.io/jeedom-plugin-naturalLight/#language#/",
    
 	"language": [
 		"fr_FR"
